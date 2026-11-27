@@ -7,15 +7,28 @@
 [![최신 릴리스](https://img.shields.io/github/v/release/inchanS/AlfGoogleSuggestPlus?logo=rocket)](https://github.com/inchanS/AlfGoogleSuggestPlus/releases/latest)
 [![라이선스 MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-AlfNaverSearchPlus를 쓰면서 익숙해진 빠른 자동완성을 Google 검색에서도 쓰고 싶어 만들었습니다. Alfred 공식 Google Suggest는 입력이 바뀌면 이전 추천을 먼저 보여 주고, 0.1초 뒤 스크립트를 다시 실행해 새 추천을 가져옵니다. 이 워크플로우에서는 Alfred가 입력 원문을 즉시 검색할 수 있게 하고, Go 바이너리가 새 추천을 한 번의 실행으로 가져옵니다. 같은 검색어를 30초 안에 다시 입력하면 디스크 캐시에서 추천을 읽습니다.
+AlfNaverSearchPlus를 쓰면서 익숙해진 빠른 자동완성을 Google 검색에서도 쓰고 싶어 만들었습니다. Alfred 공식 [Google Suggest workflow](https://github.com/alfredapp/google-suggest-workflow)는 키워드를 모두 입력한 후 약 0.5\~1초 정도 뒤에 자동완성 목록이 나타나는 불편함이 있었습니다.  
+반면 이 워크플로우에서는 Alfred가 입력 원문을 즉시 검색할 수 있게 하고, Go 바이너리가 새 추천을 한 번의 실행으로 가져옵니다. 같은 검색어를 30초 안에 다시 입력하면 디스크 캐시에서 추천을 읽기에 더 빠른 로딩이 가능합니다.  
 
 같은 Mac에서 `서울 날씨`의 추천을 받아오는 데 걸린 중앙값은 공식 워크플로우 480.5 ms, 이 워크플로우 256.5 ms였고, 캐시 적중 시에는 7.8 ms였습니다. 측정 범위는 프로세스 시작부터 추천 JSON 반환까지입니다. [측정 조건과 결과](#측정-결과)
 
 Alfred에서 `g 서울 날씨`처럼 입력하면 직접 검색 행과 Google 추천 검색어가 표시됩니다. ↩로 선택한 검색어를 기본 브라우저에서 열고, ⇥로 추천 검색어를 입력창에 채울 수 있습니다.
 
+<img src="images/alfgsp.png" width="600">
+
+
+## 사용 환경
+
+- **Alfred 5.0 이상 + Powerpack**이 필요합니다. 검색 키워드와 자동 업데이트 설정에는 Alfred 5.0에서 도입된 워크플로우 사용자 설정을 사용합니다. 실제 검색 동작은 Alfred 6에서 확인했습니다. [Alfred 5.0 변경 내역](https://www.alfredapp.com/changelog/v5/)
+- **macOS 13 Ventura 이상**이 필요합니다. 현재 패키지에 포함된 Apple Silicon용과 Intel용 실행 파일의 최소 macOS 버전은 모두 13.0입니다.
+- **추가 런타임 설치는 필요 없습니다.** 릴리스 패키지에 실행 파일이 포함되어 있어 Python이나 Go를 설치하지 않고 사용할 수 있습니다.
+
 ## 설치
 
-Alfred Powerpack이 설치된 Mac에서 [AlfGoogleSuggestPlus.alfredworkflow](AlfGoogleSuggestPlus.alfredworkflow)를 열어 가져옵니다. 패키지에는 Apple Silicon과 Intel용 실행 코드가 함께 들어 있습니다. 사용 시 Go 설치는 필요하지 않습니다. **Configure Workflow → Search Keyword**에서 기본 키워드 `g`를 바꿀 수 있습니다. 같은 키워드를 쓰는 기존 워크플로우가 있으면 서로 다른 키워드를 지정하세요.
+1. [최신 릴리스 페이지](https://github.com/inchanS/AlfGoogleSuggestPlus/releases/latest)의 **Assets**에서 `AlfGoogleSuggestPlus.alfredworkflow`를 다운로드합니다.
+2. Alfred Powerpack이 설치된 Mac에서 다운로드한 파일을 열고 워크플로우를 가져옵니다.
+
+**Configure Workflow → Search Keyword**에서 기본 키워드 `g`를 바꿀 수 있습니다. 같은 키워드를 쓰는 기존 워크플로우가 있으면 서로 다른 키워드를 지정하세요.
 
 ## 업데이트
 
