@@ -30,7 +30,9 @@ Alfred에서 `g 서울 날씨`처럼 입력하면 직접 검색 행과 Google �
 
 **Configure Workflow → Search Keyword**에서 기본 키워드 `g`를 바꿀 수 있습니다. 같은 키워드를 쓰는 기존 워크플로우가 있으면 서로 다른 키워드를 지정하세요.
 
-### macOS에서 `googlesuggest`를 열 수 없다고 표시될 때
+### 📌 ‼️macOS에서 `googlesuggest`를 열 수 없다고 표시될 때
+
+<img src="images/alfgsp-warning.png" width="600">
 
 현재 릴리스의 실행 파일은 ad-hoc 서명으로 배포되며 Apple 공증을 받지 않았습니다. 인터넷에서 받은 패키지를 처음 실행할 때 macOS가 개발자를 확인할 수 없다는 경고를 표시할 수 있습니다. 공식 릴리스에서 받은 파일임을 확인한 경우, 경고에서 **완료**를 누른 뒤 **시스템 설정 → 개인정보 보호 및 보안 → 보안**에서 `googlesuggest`에 대해 **그래도 열기**를 선택하고 Alfred에서 검색을 다시 실행하세요. [Apple의 개별 실행 허용 안내](https://support.apple.com/ko-kr/guide/mac-help/mh40617/mac)
 
