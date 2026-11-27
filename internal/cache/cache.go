@@ -6,7 +6,6 @@ package cache
 import (
 	"crypto/md5"
 	"encoding/hex"
-
 	"fmt"
 	"io"
 	"os"

@@ -26,7 +26,8 @@ def release_notes(tag, repo_url):
     fields = records.split("\0")
     print("## 주요 변경 사항\n")
     for commit, message in zip(fields[::2], fields[1::2]):
-        title, *body = message.strip().splitlines()
+        lines = message.strip().splitlines()
+        title, *body = lines or ["제목 없는 커밋"]
         print(f"- {title} ([{commit[:7]}]({repo_url}/commit/{commit}))")
         for line in body:
             if line.lstrip().startswith(("- ", "* ")):

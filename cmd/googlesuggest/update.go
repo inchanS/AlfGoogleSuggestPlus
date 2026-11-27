@@ -1,6 +1,7 @@
 package main
 
 import (
+	"archive/zip"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -158,18 +159,41 @@ func install(client *http.Client, current string, open func(string) error) (stri
 	if err != nil {
 		return "", err
 	}
-	n, copyErr := io.Copy(f, resp.Body)
-	closeErr := f.Close()
-	if err = errors.Join(copyErr, closeErr); err == nil {
-		if n == 0 {
-			err = errors.New("빈 설치 패키지")
-		} else {
-			err = open(f.Name())
-		}
+	_, copyErr := io.Copy(f, resp.Body)
+	err = errors.Join(copyErr, f.Close())
+	if err == nil {
+		err = validatePackage(f.Name())
+	}
+	if err == nil {
+		err = open(f.Name())
 	}
 	if err != nil {
 		_ = os.Remove(f.Name())
 		return "", err
 	}
 	return tag + " 설치 파일을 열었습니다. Alfred에서 업데이트를 확인하세요.", nil
+}
+
+// Reject incomplete downloads and unrelated ZIP files before handing off to Alfred.
+func validatePackage(path string) error {
+	archive, err := zip.OpenReader(path)
+	if err != nil {
+		return fmt.Errorf("설치 패키지를 읽을 수 없습니다: %w", err)
+	}
+	defer archive.Close()
+	for _, name := range []string{"info.plist", "googlesuggest"} {
+		member, err := archive.Open(name)
+		if err != nil {
+			return fmt.Errorf("설치 패키지에 %s 파일이 없습니다", name)
+		}
+		n, readErr := io.Copy(io.Discard, member)
+		err = errors.Join(readErr, member.Close())
+		if err != nil {
+			return fmt.Errorf("설치 패키지의 %s 파일을 읽을 수 없습니다: %w", name, err)
+		}
+		if n == 0 {
+			return fmt.Errorf("설치 패키지의 %s 파일이 비어 있습니다", name)
+		}
+	}
+	return nil
 }

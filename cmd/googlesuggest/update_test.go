@@ -1,6 +1,8 @@
 package main
 
 import (
+	"archive/zip"
+	"bytes"
 	"errors"
 	"fmt"
 	"net/http"
@@ -52,6 +54,21 @@ func TestWeeklyCheck(t *testing.T) {
 }
 
 func TestReleaseInstall(t *testing.T) {
+	var packageBody bytes.Buffer
+	writer := zip.NewWriter(&packageBody)
+	for _, name := range []string{"info.plist", "googlesuggest"} {
+		member, err := writer.Create(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err = member.Write([]byte("fixture")); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := writer.Close(); err != nil {
+		t.Fatal(err)
+	}
+
 	for _, tc := range []struct {
 		name, tag string
 		status    int
@@ -59,7 +76,15 @@ func TestReleaseInstall(t *testing.T) {
 		downloads int
 		wantErr   bool
 	}{
-		{"upgrade", "v1.10.0", 200, assetName, 1, false}, {"equal", "v1.9.0", 200, assetName, 0, false}, {"older", "v1.8.0", 200, assetName, 0, false}, {"bad tag", "v1.10.0-beta", 200, assetName, 0, true}, {"missing asset", "v1.10.0", 200, "source.zip", 0, true}, {"no releases", "", 404, "", 0, false}, {"API unavailable", "", 503, "", 0, true}, {"broken download", "v1.10.0", 200, assetName, 1, true},
+		{"upgrade", "v1.10.0", 200, assetName, 1, false},
+		{"equal", "v1.9.0", 200, assetName, 0, false},
+		{"older", "v1.8.0", 200, assetName, 0, false},
+		{"bad tag", "v1.10.0-beta", 200, assetName, 0, true},
+		{"missing asset", "v1.10.0", 200, "source.zip", 0, true},
+		{"no releases", "", 404, "", 0, false},
+		{"API unavailable", "", 503, "", 0, true},
+		{"broken download", "v1.10.0", 200, assetName, 1, true},
+		{"invalid archive", "v1.10.0", 200, assetName, 1, true},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Setenv("alfred_workflow_cache", t.TempDir())
@@ -76,13 +101,16 @@ func TestReleaseInstall(t *testing.T) {
 				if tc.name == "broken download" {
 					return reply(503, "failed")
 				}
-				return reply(200, "mock package")
+				if tc.name == "invalid archive" {
+					return reply(200, "<html>Temporary error</html>")
+				}
+				return reply(200, packageBody.String())
 			})}
 			opened := false
 			_, err := install(client, "1.9.0", func(p string) error {
 				opened = true
 				b, err := os.ReadFile(p)
-				if string(b) != "mock package" {
+				if !bytes.Equal(b, packageBody.Bytes()) {
 					t.Fatal("incomplete download")
 				}
 				return err

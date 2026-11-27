@@ -2,6 +2,9 @@
 set -eu
 cd "$(dirname "$0")"
 version=${WORKFLOW_VERSION-$(cat VERSION)}
+case "$version" in
+    *[!0-9.]*) echo "Invalid workflow version" >&2; exit 1 ;;
+esac
 if ! printf '%s\n' "$version" | LC_ALL=C grep -Exq '[0-9]+\.[0-9]+\.[0-9]+'; then
     echo "Expected a workflow version such as 1.0.0" >&2
     exit 1
