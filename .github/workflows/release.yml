@@ -22,7 +22,7 @@ jobs:
             echo "Expected a release tag such as v1.0.0" >&2
             exit 1
           fi
-          plutil -replace version -string "${GITHUB_REF_NAME#v}" workflow/info.plist
+          echo "WORKFLOW_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
 
       - uses: actions/setup-go@v5
         with:

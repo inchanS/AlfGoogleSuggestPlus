@@ -5,7 +5,11 @@
 [![GitHub 스타](https://img.shields.io/github/stars/inchanS/AlfGoogleSuggestPlus?style=flat&logo=apachespark)](https://github.com/inchanS/AlfGoogleSuggestPlus/stargazers)
 [![누적 다운로드](https://img.shields.io/github/downloads/inchanS/AlfGoogleSuggestPlus/total?logo=github)](https://github.com/inchanS/AlfGoogleSuggestPlus/releases)
 [![최신 릴리스](https://img.shields.io/github/v/release/inchanS/AlfGoogleSuggestPlus?logo=rocket)](https://github.com/inchanS/AlfGoogleSuggestPlus/releases/latest)
-[![라이선스](https://img.shields.io/github/license/inchanS/AlfGoogleSuggestPlus)](LICENSE)
+[![라이선스 MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+AlfNaverSearchPlus를 쓰면서 익숙해진 빠른 자동완성을 Google 검색에서도 쓰고 싶어 만들었습니다. Alfred 공식 Google Suggest는 입력이 바뀌면 이전 추천을 먼저 보여 주고, 0.1초 뒤 스크립트를 다시 실행해 새 추천을 가져옵니다. 이 워크플로우에서는 Alfred가 입력 원문을 즉시 검색할 수 있게 하고, Go 바이너리가 새 추천을 한 번의 실행으로 가져옵니다. 같은 검색어를 30초 안에 다시 입력하면 디스크 캐시에서 추천을 읽습니다.
+
+같은 Mac에서 `서울 날씨`의 추천을 받아오는 데 걸린 중앙값은 공식 워크플로우 480.5 ms, 이 워크플로우 256.5 ms였고, 캐시 적중 시에는 7.8 ms였습니다. 측정 범위는 프로세스 시작부터 추천 JSON 반환까지입니다. [측정 조건과 결과](#측정-결과)
 
 Alfred에서 `g 서울 날씨`처럼 입력하면 직접 검색 행과 Google 추천 검색어가 표시됩니다. ↩로 선택한 검색어를 기본 브라우저에서 열고, ⇥로 추천 검색어를 입력창에 채울 수 있습니다.
 
@@ -44,7 +48,7 @@ go vet ./...
 ./make.sh
 ```
 
-`./build.sh`는 arm64와 amd64를 각각 빌드해 `workflow/googlesuggest`로 결합하고 두 아키텍처의 서명을 확인합니다. `./make.sh`는 빌드부터 plist 검사와 압축 검증까지 실행한 뒤 루트에 설치 패키지를 생성합니다. MIT 고지는 [LICENSE](LICENSE)에, 공식 Google Suggest에서 가져온 아이콘의 BSD 3-Clause 고지는 [LICENSE-icon](workflow/LICENSE-icon)에 있으며 두 파일 모두 배포 패키지에 포함됩니다.
+`./build.sh`는 arm64와 amd64를 각각 빌드해 `workflow/googlesuggest`로 결합하고 두 아키텍처의 서명을 확인합니다. `./make.sh`는 빌드부터 plist 검사와 압축 검증까지 실행한 뒤 루트에 설치 패키지를 생성합니다. 로컬 빌드는 `VERSION`에서, 태그 릴리스는 태그에서 버전을 읽어 배포용 plist의 `{{VERSION_INFO}}` 자리를 채웁니다. 배포 패키지에는 프로젝트의 [MIT 라이선스](LICENSE), AlfNaverSearchPlus에서 가져온 코드의 [원본 MIT 고지](workflow/LICENSE-Naver), 공식 Google Suggest 아이콘의 [BSD 3-Clause 고지](workflow/LICENSE-icon)가 포함됩니다.
 
 ### GitHub 릴리스
 
