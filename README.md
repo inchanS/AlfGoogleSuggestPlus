@@ -17,6 +17,12 @@ Alfred에서 `g 서울 날씨`처럼 입력하면 직접 검색 행과 Google �
 
 Alfred Powerpack이 설치된 Mac에서 [AlfGoogleSuggestPlus.alfredworkflow](AlfGoogleSuggestPlus.alfredworkflow)를 열어 가져옵니다. 패키지에는 Apple Silicon과 Intel용 실행 코드가 함께 들어 있습니다. 사용 시 Go 설치는 필요하지 않습니다. **Configure Workflow → Search Keyword**에서 기본 키워드 `g`를 바꿀 수 있습니다. 같은 키워드를 쓰는 기존 워크플로우가 있으면 서로 다른 키워드를 지정하세요.
 
+## 업데이트
+
+처음 검색할 때, 이후 마지막 확인에서 **7일이 지난 뒤 처음 검색할 때** GitHub의 최신 정식 릴리스를 확인합니다. 확인을 맡은 프로세스는 검색과 별도로 한 번 실행한 뒤 종료합니다. 네트워크 오류가 발생하면 다음 날 이후 첫 검색에서 재시도합니다.
+
+새 버전이 있으면 검색 목록에 업데이트 항목이 나타납니다. 항목을 선택하고 ↩를 누르면 최신 릴리스를 다시 확인해 설치 파일을 내려받고 Alfred의 가져오기 창을 엽니다. 수동으로 확인하려면 `g workflow:update`를 입력하고 ↩를 누르세요. 키워드를 변경했다면 `g` 대신 설정한 키워드를 사용합니다. **Configure Workflow → 업데이트 → 새 버전 자동 확인**에서 주간 확인을 끌 수 있습니다.
+
 ## 실행과 캐시
 
 같은 키워드를 쓰는 Alfred 기본 Keyword와 Script Filter가 Open URL 동작 하나에 연결됩니다. Keyword가 입력 원문을 즉시 검색할 수 있게 하고, Script Filter가 `workflow/googlesuggest`를 외부 실행 파일로 직접 호출합니다. 이 구성을 택한 이유는 실제 Alfred에서 네트워크 요청 중 Enter를 누르면 직전 검색어가 열리는 현상을 재현했기 때문입니다. 직접 검색 행은 네트워크가 끊기거나 추천이 없어도 사용할 수 있습니다.
@@ -32,7 +38,7 @@ Go 바이너리는 검색어를 argv로 받고 JSON을 stdout에 한 번 출력�
 | [AlfNaverSearchPlus · 6836e5f](https://github.com/inchanS/AlfNaverSearchPlus/tree/6836e5f1c4d49a0c3fd0b8b4e62f7bd2812be038) | 일반검색 `n`은 Script Filter → Bash 실행기 → Go의 search 핸들러 순서로 실행됩니다. Naver JSON의 `items[0]`를 순회해 Alfred JSON을 만들고, 검색 원문을 첫 행에 둡니다. 검색 캐시 30초, 요청 기한 3초, 업데이트 작업자의 캐시 정리 기준 24시간입니다. |
 | [공식 Google Suggest · dc32c30](https://github.com/alfredapp/google-suggest-workflow/blob/dc32c304345df9493b1859123ab81ae288de6d91/Workflow/info.plist) | 새 입력은 JXA가 원문과 이전 추천을 먼저 반환합니다. 0.1초 후 재실행해 Google에 동기 요청하고 JSON 배열의 두 번째 원소를 읽습니다. 선택한 문자열은 Alfred의 Google 시스템 웹 검색에 전달합니다. |
 
-Naver의 `cmd/`, `internal/cache/`, `workflow/` 구조와 Universal 빌드 → ad-hoc 서명 → ZIP 패키징 방식을 따릅니다. Go 표준 라이브러리만 사용합니다. 이번 구현에는 상주 프로세스나 자동 업데이트 작업자가 없으며, Alfred 재실행을 요청하는 `rerun`도 없습니다. Google용 Script Filter는 `queuedelaymode=0`, `queuemode=2`, `queuedelayimmediatelyinitially=true`를 사용합니다. Naver 일반검색의 해당 값은 각각 `0`, `1`, `false`입니다.
+Naver의 `cmd/`, `internal/cache/`, `workflow/` 구조와 Universal 빌드 → ad-hoc 서명 → ZIP 패키징 방식을 따릅니다. Go 표준 라이브러리만 사용합니다. 이번 구현에는 상주 프로세스가 없으며, Alfred 재실행을 요청하는 `rerun`도 없습니다. Google용 Script Filter는 `queuedelaymode=0`, `queuemode=2`, `queuedelayimmediatelyinitially=true`를 사용합니다. Naver 일반검색의 해당 값은 각각 `0`, `1`, `false`입니다.
 
 ## Google 엔드포인트
 

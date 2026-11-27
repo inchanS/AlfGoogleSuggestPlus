@@ -10,7 +10,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>7CD91F15-D8A6-4E5E-B764-63FAB0DF9F63</string>
+				<string>F64234EC-15A7-41D1-9AD3-BFA89AC198C6</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -21,6 +21,44 @@
 		</array>
 		<key>7F7C2AD9-1997-4AE7-9255-CA75E2241D82</key>
 		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F64234EC-15A7-41D1-9AD3-BFA89AC198C6</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>C857EB6C-6431-41B3-AA54-DFD3FA643990</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>35EB1BA2-3AD5-41F5-8AA1-0179437A26B7</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>F64234EC-15A7-41D1-9AD3-BFA89AC198C6</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C857EB6C-6431-41B3-AA54-DFD3FA643990</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>26F12DA4-4703-4EF5-80FB-37DACF61492A</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 			<dict>
 				<key>destinationuid</key>
 				<string>7CD91F15-D8A6-4E5E-B764-63FAB0DF9F63</string>
@@ -132,11 +170,94 @@
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{query}</string>
+						<key>matchcasesensitive</key>
+						<true/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>^workflow:update$</string>
+						<key>outputlabel</key>
+						<string>업데이트</string>
+						<key>uid</key>
+						<string>26F12DA4-4703-4EF5-80FB-37DACF61492A</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>Google 검색</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>F64234EC-15A7-41D1-9AD3-BFA89AC198C6</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>exec ./googlesuggest --update install</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>C857EB6C-6431-41B3-AA54-DFD3FA643990</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{query}</string>
+				<key>title</key>
+				<string>AlfGoogleSuggestPlus</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>35EB1BA2-3AD5-41F5-8AA1-0179437A26B7</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
-	<string>g 뒤에 검색어를 입력하고 ↩로 검색하세요. Tab으로 추천 검색어를 입력창에 채울 수 있습니다.</string>
+	<string>g 뒤에 검색어를 입력하고 ↩로 검색하세요. Tab으로 추천 검색어를 입력창에 채울 수 있습니다. 새 버전 알림을 선택하거나 g workflow:update로 업데이트할 수 있습니다.</string>
 	<key>uidata</key>
 	<dict>
+		<key>35EB1BA2-3AD5-41F5-8AA1-0179437A26B7</key>
+		<dict>
+			<key>xpos</key>
+			<integer>640</integer>
+			<key>ypos</key>
+			<integer>15</integer>
+		</dict>
 		<key>5CBAD26A-0AF7-49A0-8009-4E08329853D2</key>
 		<dict>
 			<key>xpos</key>
@@ -147,9 +268,9 @@
 		<key>7CD91F15-D8A6-4E5E-B764-63FAB0DF9F63</key>
 		<dict>
 			<key>xpos</key>
-			<integer>250</integer>
+			<integer>455</integer>
 			<key>ypos</key>
-			<integer>40</integer>
+			<integer>180</integer>
 		</dict>
 		<key>7F7C2AD9-1997-4AE7-9255-CA75E2241D82</key>
 		<dict>
@@ -157,6 +278,20 @@
 			<integer>40</integer>
 			<key>ypos</key>
 			<integer>180</integer>
+		</dict>
+		<key>C857EB6C-6431-41B3-AA54-DFD3FA643990</key>
+		<dict>
+			<key>xpos</key>
+			<integer>455</integer>
+			<key>ypos</key>
+			<integer>15</integer>
+		</dict>
+		<key>F64234EC-15A7-41D1-9AD3-BFA89AC198C6</key>
+		<dict>
+			<key>xpos</key>
+			<integer>240</integer>
+			<key>ypos</key>
+			<integer>100</integer>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
@@ -181,6 +316,23 @@
 			<string>textfield</string>
 			<key>variable</key>
 			<string>search_keyword</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>text</key>
+				<string>새 버전 자동 확인</string>
+			</dict>
+			<key>description</key>
+			<string>검색할 때 주 1회 GitHub 릴리스를 확인합니다.</string>
+			<key>label</key>
+			<string>업데이트</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>automatic_updates</string>
 		</dict>
 	</array>
 	<key>version</key>

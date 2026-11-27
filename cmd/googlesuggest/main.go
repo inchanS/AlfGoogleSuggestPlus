@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -83,11 +84,44 @@ func search(client *http.Client, endpoint, query string) feedback {
 }
 
 func main() {
+	current := os.Getenv("alfred_workflow_version")
+	if len(os.Args) == 3 && os.Args[1] == "--update" {
+		switch os.Args[2] {
+		case "check":
+			_, err := checkRelease(&http.Client{Timeout: 15 * time.Second})
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+			}
+		case "install":
+			message, err := install(&http.Client{Timeout: 2 * time.Minute}, current, func(path string) error { return exec.Command("/usr/bin/open", path).Run() })
+			if err != nil {
+				message = "업데이트 실패 · " + err.Error()
+			}
+			fmt.Print(message)
+		}
+		return
+	}
 	var query string
 	if len(os.Args) > 1 {
 		query = os.Args[1]
 	}
-	out := search(&http.Client{Timeout: 1500 * time.Millisecond}, endpoint, query)
+	out := feedback{Items: []item{}, SkipKnowledge: true}
+	if query == updateCommand {
+		out.Items = append(out.Items, item{Title: "업데이트 확인 및 설치", Arg: updateCommand, Subtitle: "Enter로 최신 GitHub 릴리스를 확인합니다"})
+	} else {
+		dir := os.Getenv("alfred_workflow_cache")
+		auto := dir != "" && current != "" && os.Getenv("automatic_updates") != "0"
+		if auto {
+			schedule(dir, startCheck)
+		}
+		out = search(&http.Client{Timeout: 1500 * time.Millisecond}, endpoint, query)
+		if auto {
+			tag, _ := cache.Read(releaseKey, 0)
+			if newer(string(tag), current) {
+				out.Items = append([]item{{Title: "AlfGoogleSuggestPlus " + string(tag) + " 업데이트", Arg: updateCommand, Subtitle: "Enter로 내려받고 Alfred에서 설치"}}, out.Items...)
+			}
+		}
+	}
 	if err := json.NewEncoder(os.Stdout).Encode(out); err != nil {
 		os.Exit(1)
 	}
