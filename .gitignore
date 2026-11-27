@@ -1,2 +1,7 @@
 .DS_Store
 /workflow/googlesuggest
+/.idea
+
+# output file
+NaverSearch.alfredworkflow
+*.alfredworkflow
