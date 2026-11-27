@@ -1,0 +1,43 @@
+name: Tagged release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set package version from tag
+        shell: bash
+        run: |
+          if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Expected a release tag such as v1.0.0" >&2
+            exit 1
+          fi
+          plutil -replace version -string "${GITHUB_REF_NAME#v}" workflow/info.plist
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+
+      - name: Test and package
+        run: |
+          go vet ./...
+          go test -race ./...
+          ./make.sh
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" AlfGoogleSuggestPlus.alfredworkflow \
+            --verify-tag --title "$GITHUB_REF_NAME" --generate-notes
