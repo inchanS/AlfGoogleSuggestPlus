@@ -48,8 +48,10 @@ func fetch(client *http.Client, endpoint, query string) ([]byte, error) {
 	return body, err
 }
 
-func suggestions(client *http.Client, endpoint, query string) ([]string, error) {
-	return cache.Load(cache.Key("google", query), 30*time.Second, func() ([]byte, error) { return fetch(client, endpoint, query) }, func(body []byte) ([]string, error) {
+type suggestionLoader func(string) ([]byte, error)
+
+func suggestions(load suggestionLoader, query string) ([]string, error) {
+	return cache.Load(cache.Key("google", query), 30*time.Second, func() ([]byte, error) { return load(query) }, func(body []byte) ([]string, error) {
 		var fields []json.RawMessage
 		var words []string
 		var echoed string
@@ -62,7 +64,7 @@ func suggestions(client *http.Client, endpoint, query string) ([]string, error) 
 	})
 }
 
-func search(client *http.Client, endpoint, query string) feedback {
+func search(load suggestionLoader, query string) feedback {
 	out := feedback{Items: []item{}, SkipKnowledge: true}
 	if strings.TrimSpace(query) == "" {
 		return out
@@ -71,7 +73,7 @@ func search(client *http.Client, endpoint, query string) feedback {
 		out.Items = append(out.Items, item{Title: word, Arg: word, Autocomplete: word, Subtitle: "Google에서 검색"})
 	}
 	// Alfred's native Keyword object supplies the actionable original query.
-	words, err := suggestions(client, endpoint, query)
+	words, err := suggestions(load, query)
 	if err != nil {
 		return out
 	}
@@ -84,6 +86,12 @@ func search(client *http.Client, endpoint, query string) feedback {
 }
 
 func main() {
+	if len(os.Args) == 3 && os.Args[1] == "--session" && os.Args[2] == "serve" {
+		if err := serveSession(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+		return
+	}
 	current := os.Getenv("alfred_workflow_version")
 	if len(os.Args) == 3 && os.Args[1] == "--update" {
 		switch os.Args[2] {
@@ -114,7 +122,11 @@ func main() {
 		if auto {
 			schedule(dir, startCheck)
 		}
-		out = search(&http.Client{Timeout: 1500 * time.Millisecond}, endpoint, query)
+		if strings.TrimSpace(query) == "" {
+			_, _ = sessionFetch("")
+		} else {
+			out = search(sessionFetch, query)
+		}
 		if auto {
 			tag, _ := cache.Read(releaseKey, 0)
 			if newer(string(tag), current) {

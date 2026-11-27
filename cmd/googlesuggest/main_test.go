@@ -36,7 +36,7 @@ func TestQueryAndCache(t *testing.T) {
 				return reply(200, string(data))
 			})}
 			for i := 0; i < 2; i++ {
-				out := search(c, endpoint, q)
+				out := search(func(q string) ([]byte, error) { return fetch(c, endpoint, q) }, q)
 				if !out.SkipKnowledge || len(out.Items) != 2 || out.Items[0].Arg != "second" || out.Items[1].Arg != "first" {
 					t.Fatal(out)
 				}
@@ -52,14 +52,14 @@ func TestQueryAndCache(t *testing.T) {
 			if err := os.Chtimes(files[0], old, old); err != nil {
 				t.Fatal(err)
 			}
-			search(c, endpoint, q)
+			search(func(q string) ([]byte, error) { return fetch(c, endpoint, q) }, q)
 			if calls != 2 {
 				t.Fatal("expired cache used")
 			}
 			if err := os.WriteFile(files[0], []byte("broken"), 0600); err != nil {
 				t.Fatal(err)
 			}
-			search(c, endpoint, q)
+			search(func(q string) ([]byte, error) { return fetch(c, endpoint, q) }, q)
 			if calls != 3 {
 				t.Fatal("corrupt cache used")
 			}
@@ -91,11 +91,11 @@ func TestFailureAndEmpty(t *testing.T) {
 					return reply(200, "{")
 				}
 			})}
-			if len(search(c, endpoint, " ").Items) != 0 || calls != 0 {
+			if len(search(func(q string) ([]byte, error) { return fetch(c, endpoint, q) }, " ").Items) != 0 || calls != 0 {
 				t.Fatal("empty input")
 			}
 			for i := 0; i < 2; i++ {
-				out := search(c, endpoint, "q")
+				out := search(func(q string) ([]byte, error) { return fetch(c, endpoint, q) }, "q")
 				if len(out.Items) != 0 {
 					t.Fatal(out)
 				}
