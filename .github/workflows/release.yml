@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
   release:
@@ -36,9 +37,26 @@ jobs:
           go test -race ./...
           ./make.sh
 
-      - name: Generate release notes from commits
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate Korean release notes
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          python3 scripts/release_notes.py "$GITHUB_REF_NAME" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" > "$RUNNER_TEMP/release-notes.md"
+          args=(scripts/release_notes.py "$GITHUB_REF_NAME" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY")
+          notes="$RUNNER_TEMP/release-notes.md"
+          python3 "${args[@]}" > "$notes" && exit 0
+          status=$?
+          if [[ $status != 42 ]]; then exit "$status"; fi
+          python3 -m venv "$RUNNER_TEMP/release-translator"
+          source "$RUNNER_TEMP/release-translator/bin/activate"
+          python -m pip install 'argostranslate==1.9.6'
+          argospm update
+          argospm install translate-en_ko
+          python "${args[@]}" > "$notes"
 
       - name: Publish GitHub release
         env:
