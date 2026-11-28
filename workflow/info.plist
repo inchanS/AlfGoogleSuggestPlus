@@ -19,19 +19,6 @@
 				<false/>
 			</dict>
 		</array>
-		<key>7F7C2AD9-1997-4AE7-9255-CA75E2241D82</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>F64234EC-15A7-41D1-9AD3-BFA89AC198C6</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
 		<key>C857EB6C-6431-41B3-AA54-DFD3FA643990</key>
 		<array>
 			<dict>
@@ -47,6 +34,18 @@
 		</array>
 		<key>F64234EC-15A7-41D1-9AD3-BFA89AC198C6</key>
 		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8429FE85-37E0-4320-BB48-2898220FA20B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>9485B851-0337-4B32-BC13-7FDE74AD28E6</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 			<dict>
 				<key>destinationuid</key>
 				<string>C857EB6C-6431-41B3-AA54-DFD3FA643990</string>
@@ -79,27 +78,6 @@
 	<string>AlfGoogleSuggestPlus</string>
 	<key>objects</key>
 	<array>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>0</integer>
-				<key>keyword</key>
-				<string>{var:search_keyword}</string>
-				<key>subtext</key>
-				<string>Google에서 바로 검색</string>
-				<key>text</key>
-				<string>{query}</string>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>7F7C2AD9-1997-4AE7-9255-CA75E2241D82</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -136,7 +114,7 @@
 				<key>subtext</key>
 				<string></string>
 				<key>title</key>
-				<string>Google에서 {query} 검색</string>
+				<string>Google 검색어 입력</string>
 				<key>type</key>
 				<integer>8</integer>
 				<key>withspace</key>
@@ -175,6 +153,20 @@
 			<dict>
 				<key>conditions</key>
 				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{query}</string>
+						<key>matchcasesensitive</key>
+						<true/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>^$</string>
+						<key>outputlabel</key>
+						<string>검색어 입력</string>
+						<key>uid</key>
+						<string>9485B851-0337-4B32-BC13-7FDE74AD28E6</string>
+					</dict>
 					<dict>
 						<key>inputstring</key>
 						<string>{query}</string>
@@ -246,11 +238,33 @@
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{var:search_keyword} </string>
+				<key>leftcursor</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.showalfred</string>
+			<key>uid</key>
+			<string>8429FE85-37E0-4320-BB48-2898220FA20B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>g 뒤에 검색어를 입력하고 ↩로 검색하세요. Tab으로 추천 검색어를 입력창에 채울 수 있습니다. 새 버전 알림을 선택하거나 g workflow:update로 업데이트할 수 있습니다.</string>
 	<key>uidata</key>
 	<dict>
+		<key>8429FE85-37E0-4320-BB48-2898220FA20B</key>
+		<dict>
+			<key>xpos</key>
+			<integer>455</integer>
+			<key>ypos</key>
+			<integer>95</integer>
+		</dict>
 		<key>35EB1BA2-3AD5-41F5-8AA1-0179437A26B7</key>
 		<dict>
 			<key>xpos</key>
@@ -269,13 +283,6 @@
 		<dict>
 			<key>xpos</key>
 			<integer>455</integer>
-			<key>ypos</key>
-			<integer>180</integer>
-		</dict>
-		<key>7F7C2AD9-1997-4AE7-9255-CA75E2241D82</key>
-		<dict>
-			<key>xpos</key>
-			<integer>40</integer>
 			<key>ypos</key>
 			<integer>180</integer>
 		</dict>
